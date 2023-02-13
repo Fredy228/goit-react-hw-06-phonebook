@@ -1,11 +1,29 @@
 import {useState} from "react";
 import {From, Input, Label, Button} from './Phonebook.styled';
-import PropTypes from 'prop-types';
+import { addNewContact } from 'redux/slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { nanoid } from 'nanoid';
 
-export const Phonebook = ({addContact}) => {
+export const Phonebook = () => {
 
     const [nameContact, setNameContact] = useState('');
     const [number, setNumber] = useState('');
+    const dispacth = useDispatch()
+    const contacts = useSelector((state) => state.contacts.value);
+
+    const addContact = (name, number) => {
+        const haveContact = contacts.find( contact => contact.name === name || contact.number === number);
+        if(haveContact) {
+        alert(`${haveContact.name} is already in contacts`)
+        } else {
+        const newContacts = {
+            id: nanoid(),
+            name,
+            number
+        };
+        dispacth(addNewContact(newContacts));
+        }
+    }
 
     const handleChange = event => {
         const {value, name} = event.currentTarget;
@@ -58,8 +76,3 @@ export const Phonebook = ({addContact}) => {
     </From>
     )
     }
-
-Phonebook.propTypes = {
-    addContact: PropTypes.func
-}
-

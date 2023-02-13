@@ -1,14 +1,19 @@
 import {ListContacts, ItemContact, Button, Text} from './ContactsList.styled';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { deleteContact } from '../../redux/slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'redux/slice';
 
-export const ContactsList = ({findContactsByName, contacts}) => {
+export const ContactsList = () => {
    
     const dispacth = useDispatch();
-    let foundContacts = findContactsByName();
-    let renderCondition = foundContacts.length > 0 ? (foundContacts) : (contacts);
+    const contacts = useSelector(state => state.contacts.value);
+    const filter = useSelector((state) => state.filter.value);
     
+    const findContactsByName = () => {
+        return contacts.filter(contact => contact.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
+    }
+
+    let renderCondition = findContactsByName().length > 0 ? (findContactsByName()) : (contacts);
+
     return (
         <ListContacts>
             {renderCondition.map(({id, name, number}) => {
@@ -21,9 +26,4 @@ export const ContactsList = ({findContactsByName, contacts}) => {
             })}
         </ListContacts>
     )
-}
-
-ContactsList.propTypes = {
-    findContactsByName: PropTypes.func,
-    contacts: PropTypes.arrayOf(PropTypes.object)
 }
